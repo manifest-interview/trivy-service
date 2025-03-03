@@ -9,8 +9,8 @@ on:
 jobs:
   apply-k8s-config:
     runs-on: ubuntu-latest
-    # container:
-    #   image: amazon/aws-cli:latest
+    container:
+      image: amazon/aws-cli:latest
     steps:
       - name: Install AWS CLI
         run: apk add aws-cli
@@ -20,7 +20,7 @@ jobs:
           install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
           kubectl version --client
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

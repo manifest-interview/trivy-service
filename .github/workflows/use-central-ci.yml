@@ -10,10 +10,8 @@ jobs:
   apply-k8s-config:
     runs-on: ubuntu-latest
     container:
-      image: bitnami/kubectl:latest
+      image: alpine/k8s:lates
     steps:
-      - name: Install AWS CLI
-        run: apk add aws-cli
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:

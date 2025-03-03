@@ -8,7 +8,7 @@ on:
 
 jobs:
   manifest-pipeline:
-    uses: manifest-interview/ci-pipeline/.github/workflows/pipeline.yml@main
+    uses: manifest-interview/ci-pipeline/.github/workflows/pipeline.yml@master
     with:
       skip_build: true
       external_image: aquasec/trivy:latest

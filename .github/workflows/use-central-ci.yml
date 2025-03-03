@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-scan:
-    uses: staleyj15/docker-ci/.github/workflows/docker-push.yml@main
+  manifest-pipeline:
+    uses: manifest-interview/ci-pipeline/.github/workflows/pipeline.yml@main
     with:
       skip_build: true
       external_image: aquasec/trivy:latest

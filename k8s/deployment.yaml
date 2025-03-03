@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trivy-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trivy-server
+  template:
+    metadata:
+      labels:
+        app: trivy-server
+    spec:
+      containers:
+        - name: trivy-server
+          image: aquasec/trivy:latest
+          command:
+            - "trivy"
+            - "server"
+            - "--listen"
+            - "0.0.0.0:10000"
+          ports:
+            - containerPort: 10000

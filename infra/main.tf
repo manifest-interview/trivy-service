@@ -34,44 +34,75 @@ resource "aws_s3_bucket" "manifest_sboms_s3" {
   }
 }
 
-provider "helm" {
-  kubernetes {
-    host                   = aws_eks_cluster.trivy_cluster.endpoint
-    cluster_ca_certificate = base64decode(aws_eks_cluster.trivy_cluster.certificate_authority[0].data)
-    token                  = data.aws_eks_cluster_auth.trivy_cluster.token
+provider "kubernetes" {
+  host                   = aws_eks_cluster.trivy_cluster.endpoint
+  cluster_ca_certificate = base64decode(aws_eks_cluster.trivy_cluster.certificate_authority[0].data)
+  token                  = data.aws_eks_cluster_auth.trivy_cluster.token
+}
+
+resource "kubernetes_deployment" "trivy_server" {
+  metadata {
+    name      = "trivy-server-tf"
+    namespace = "default"
+    labels = {
+      app = "trivy-server-tf"
+    }
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        app = "trivy-server-tf"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "trivy-server-tf"
+        }
+      }
+
+      spec {
+        container {
+          name  = "trivy-server"
+          image = "aquasec/trivy:latest"
+
+          command = [
+            "trivy",
+            "server",
+            "--listen",
+            "0.0.0.0:10000"
+          ]
+
+          port {
+            container_port = 10000
+          }
+        }
+      }
+    }
   }
 }
 
-resource "helm_release" "trivy" {
-  name        = "trivy"
-  repository  = "https://aquasecurity.github.io/helm-charts/"
-  chart       = "trivy"
-  namespace   = "default"
-  timeout     = 300
-  atomic      = true
-
-  set {
-    name  = "server.mode"
-    value = "true"
+resource "kubernetes_service" "trivy_service" {
+  metadata {
+    name      = "trivy-server-tf"
+    namespace = "default"
   }
 
-  set {
-    name  = "service.type"
-    value = "LoadBalancer"
-  }
+  spec {
+    selector = {
+      app = "trivy-server-tf"
+    }
 
-  set {
-    name  = "server.statefulset.enabled"
-    value = "false"
-  }
+    port {
+      port        = 10000
+      target_port = 10000
+      protocol    = "TCP"
+    }
 
-  set {
-    name  = "aggregator.enabled"
-    value = "false"
-  }
-
-  set {
-    name  = "server.service.sessionAffinity"
-    value = "None"
+    type = "LoadBalancer"
   }
 }

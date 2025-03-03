@@ -9,9 +9,11 @@ on:
 jobs:
   apply-k8s-config:
     runs-on: ubuntu-latest
-    container:
-      image: amazon/aws-cli:latest
+    # container:
+    #   image: amazon/aws-cli:latest
     steps:
+      - name: Install AWS CLI
+        run: apk add aws-cli
       - name: Install kubectl
         run: |
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"

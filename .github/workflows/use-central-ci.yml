@@ -23,7 +23,12 @@ jobs:
       - name: Deploy Trivy Service
         run: |
           aws eks update-kubeconfig --region us-east-2 --name trivy-cluster
+          echo "DEBUG"
           ls
+          pwd
+          cd ~
+          ls
+          echo "DEBUG"
           kubectl apply -f k8s/
   manifest-pipeline:
     uses: manifest-interview/ci-pipeline/.github/workflows/pipeline.yml@master

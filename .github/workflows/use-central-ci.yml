@@ -9,8 +9,6 @@ on:
 jobs:
   apply-k8s-config:
     runs-on: ubuntu-latest
-    # container:
-    #   image: amazon/aws-cli:latest
     steps:
       - name: Install dependencies
         run: |
